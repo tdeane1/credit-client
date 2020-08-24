@@ -29,13 +29,14 @@ export default function ChangePassword() {
         return (
             fields.email.length > 0 &&
             fields.password.length > 0 &&
-            fields.password === fields.confirmPassword
+            fields.password === fields.confirmPassword &&
+            fields.confirmationCode.length > 0
         );
     }
 
-    function validateConfirmationForm() {
+    /* function validateConfirmationForm() {
         return fields.confirmationCode.length > 0;
-    }
+    } */
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -43,8 +44,11 @@ export default function ChangePassword() {
         /* setIsLoading(true); */
         try {
             await Auth.completeNewPassword(
-                fields.user,
-                fields.password,
+                
+                user,
+                {
+                    completeNewPasswordChallenge: fields.confirmationCode
+                }
             );
             userHasAuthenticated(true);
             history.push("/");
@@ -57,13 +61,13 @@ export default function ChangePassword() {
 
     }
 
-    async function handleConfirmationSubmit(event) {
+    /* async function handleConfirmationSubmit(event) {
         event.preventDefault();
 
-        //setIsLoading(true);
-    }
+         *///setIsLoading(true);
+    //}
 
-    function renderConfirmationForm() {
+    /* function renderConfirmationForm() {
         return (
             <form onSubmit={handleConfirmationSubmit}>
                 <FormGroup controlId="confirmationCode" bsSize="large">
@@ -74,21 +78,21 @@ export default function ChangePassword() {
                         onChange={handleFieldChange}
                         value={fields.confirmationCode}
                     />
-                    {/* <HelpBlock>Please check your email for the code.</HelpBlock> */}
+    
                 </FormGroup>
                 <Button
                     block
                     type="submit"
                     bsSize="large"
-                    /* isLoading={isLoading} */
+                    //isLoading={isLoading} 
                     disabled={!validateConfirmationForm()}
                 >
                     Verify
         </Button>
             </form>
         );
-    }
-
+    
+    */
     function renderForm() {
         return (
             <form onSubmit={handleSubmit}>
@@ -118,6 +122,16 @@ export default function ChangePassword() {
                         value={fields.confirmPassword}
                     />
                 </FormGroup>
+                <FormGroup controlId="confirmationCode" bsSize="large">
+                    <FormLabel>Confirmation Code</FormLabel>
+                    <FormControl
+                        autoFocus
+                        type="tel"
+                        onChange={handleFieldChange}
+                        value={fields.confirmationCode}
+                    />
+                    {/* <HelpBlock>Please check your email for the code.</HelpBlock> */}
+                </FormGroup>
                 <Button
                     block
                     type="submit"
@@ -128,13 +142,13 @@ export default function ChangePassword() {
                     Signup
         </Button>
             </form>
-        );
-    }
 
+        )
+    }
 
     return (
         <div className="Signup">
-            {newUser === null ? renderForm() : renderConfirmationForm()}
+            {renderForm()}
         </div>
     );
 }
