@@ -41,7 +41,7 @@ function App() {
         </Navbar.Brand>
         <Navbar.Toggle />
         {/* </Navbar.Header> */}
-        <Nav pullRight>
+        <Nav >
           {isAuthenticated
             ? <NavItem onClick={handleLogout}>Logout</NavItem>
             : <>

@@ -3,35 +3,62 @@ import { LinkContainer } from "react-router-bootstrap";
 import { Button, FormGroup, FormControl, FormLabel, NavItem } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import { useAppContext } from "../libs/contextLib";
-import { useHistory } from "react-router-dom";
+import { useHistory, browserHistory, useParams, withRouter, location } from "react-router-dom";
 import { useFormFields } from "../libs/hooksLib";
 import { onError } from "../libs/errorLib";
-//import changePassword from "./ChangePassword";
+//import ChangePassword from "./ChangePassword";
 import "./Login.css";
+import { updateLanguageServiceSourceFile } from "typescript";
 
-export default function Login() {
+
+function Login() {
+
     const history = useHistory();
     const { userHasAuthenticated } = useAppContext();
     const [isLoading, setIsLoading] = useState(false);
     const [IsPwdToChange, setIsPwdToChange] = useState(false);
     const [fields, handleFieldChange] = useFormFields({
         email: "",
-        password: ""
+        password: "",
+        newPassword: "",
+        newPasswordConfirm: ""
+
     });
 
-    function validateForm() {
+    function validateNewPasswordForm() {
+        //console.log("validateNewPasswordForm");
+        return (
+            fields.newPassword.length > 0 && fields.newPasswordConfirm.length > 0 &&
+            fields.newPassword == fields.newPasswordConfirm
+        );
+    }
+
+    function validateLoginForm() {
+        //console.log("validateLoginForm");
         return fields.email.length > 0 && fields.password.length > 0;
     }
 
-    async function handleSubmit(event) {
+    async function handleSubmitLogin(event) {
+        console.log("handleSubmitLogin");
         event.preventDefault();
+        setIsLoading(true);
+
+        //setNewUser("test");
+
+        setIsLoading(false);
         try {
             await Auth.signIn(fields.email, fields.password)
                 .then(user => {
                     if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
                         console.log("new password required")
+
+                        setIsLoading(false);
                         setIsPwdToChange(true);
-                    } else {
+
+
+                    }
+
+                    else {
                         userHasAuthenticated(true);
                         history.push("/");
                     }
@@ -40,40 +67,114 @@ export default function Login() {
             onError(e);
             setIsLoading(false);;
         }
+
+    }
+    async function handleSubmitPasswordChange() {
+        event.preventDefault();
+        setIsLoading(true);
+        console.log("In handleSubmitPasswordChange");
+        //setIsPwdToChange(false);
+        try {
+            await Auth.signIn(fields.email, fields.password)
+                .then(user => {
+                    if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
+                        const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
+                        Auth.completeNewPassword(
+                            user,               // the Cognito User Object
+                            fields.newPassword       // the new password
+                            // OPTIONAL, the required attributes
+                            //{
+                            //email: 'xxxx@example.com',
+                            //phone_number: '1234567890'
+                            //}
+                        ).then(user => {
+                            //user is logged in
+                            console.log(user);
+                            history.push("/")
+                        });
+                    }else
+
+
+                });
+
+
+
+        }
+        catch (e) {
+            onError(e);
+        }
+    }
+
+
+
+    function renderConfirmPassword() {
+        console.log("In renderConfirmPassword");
+
+        return (
+            <form onSubmit={handleSubmitPasswordChange}>
+
+                <FormGroup controlId="newPassword" >
+                    <FormLabel>New Password</FormLabel>
+                    <FormControl
+                        autoFocus
+                        type="password"
+                        value={fields.newPassword}
+                        onChange={handleFieldChange}
+                    />
+                </FormGroup>
+                <FormGroup controlId="newPasswordConfirm" >
+                    <FormLabel>Confirm New Password</FormLabel>
+                    <FormControl
+                        type="password"
+                        value={fields.newPasswordConfirm}
+                        onChange={handleFieldChange}
+                    />
+                </FormGroup>
+                <Button block disabled={!validateNewPasswordForm()} type="submit">
+                    ChangePassword
+                </Button>
+
+
+            </form>
+        );
+    }
+    function renderLoginOnly() {
+
+        return (
+
+            <form onSubmit={handleSubmitLogin}>
+
+                <FormGroup controlId="email" >
+                    <FormLabel>Email</FormLabel>
+                    <FormControl
+                        autoFocus
+                        type="email"
+                        value={fields.email}
+                        onChange={handleFieldChange}
+                    />
+                </FormGroup>
+                <FormGroup controlId="password" >
+                    <FormLabel>Password</FormLabel>
+                    <FormControl
+                        type="password"
+                        value={fields.password}
+                        onChange={handleFieldChange}
+                    />
+                </FormGroup>
+                <Button block disabled={!validateLoginForm()} type="submit">
+                    Login
+                </Button>
+
+
+            </form>
+        );
     }
 
 
     return (
         <div className="Login">
-            <form onSubmit={handleSubmit}>
-                {IsPwdToChange ?
-                    <LinkContainer to="/changePassword">
-                        <NavItem>Change Password Required</NavItem>
-                    </LinkContainer>
-                    : <>
-                        <FormGroup controlId="email" >
-                            <FormLabel>Email</FormLabel>
-                            <FormControl
-                                autoFocus
-                                type="email"
-                                value={fields.email}
-                                onChange={handleFieldChange}
-                            />
-                        </FormGroup>
-                        <FormGroup controlId="password" >
-                            <FormLabel>Password</FormLabel>
-                            <FormControl
-                                type="password"
-                                value={fields.password}
-                                onChange={handleFieldChange}
-                            />
-                        </FormGroup>
-                        <Button block bsSize="large" disabled={!validateForm()} type="submit">
-                            Login
-                        </Button>
-                    </>
-                }
-            </form>
+            {IsPwdToChange ? renderConfirmPassword() : renderLoginOnly()}
         </div>
     );
 }
+export default withRouter(Login);

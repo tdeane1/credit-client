@@ -1,11 +1,11 @@
 import React from "react";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useParams, withRouter, location } from "react-router-dom";
 import Home from "./containers/Home";
 import Login from "./containers/Login";
 import NotFound from "./containers/NotFound";
 import ChangePassword from "./containers/ChangePassword"
 
-export default function Routes() {
+ function Routes() {
     return (
         <Switch>
             <Route exact path="/">
@@ -14,12 +14,12 @@ export default function Routes() {
             <Route exact path="/login">
                 <Login />
             </Route>
-            <Route exact path="/changePassword">
+            <Route path="/changePassword" />
                 <ChangePassword />
-            </Route>
             <Route>
                 <NotFound />
             </Route>
         </Switch>
     );
 }
+export default withRouter(Routes);

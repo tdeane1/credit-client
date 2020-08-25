@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams, withRouter, location } from "react-router-dom";
 import { useAppContext } from "../libs/contextLib";
 import { useFormFields } from "../libs/hooksLib";
 import {
@@ -27,7 +27,7 @@ export default function ChangePassword() {
 
     function validateForm() {
         return (
-            fields.email.length > 0 &&
+
             fields.password.length > 0 &&
             fields.password === fields.confirmPassword &&
             fields.confirmationCode.length > 0
@@ -42,20 +42,25 @@ export default function ChangePassword() {
         event.preventDefault();
 
         /* setIsLoading(true); */
+
+        //const currentUser = await Auth.currentUserInfo();
+        console.log(this.props.location.state.user);
         try {
             await Auth.completeNewPassword(
-                
-                user,
-                {
-                    completeNewPasswordChallenge: fields.confirmationCode
-                }
+
+                { NEW_PASSWORD_REQUIRED: fields.password }
             );
-            userHasAuthenticated(true);
-            history.push("/");
-        } catch (e) {
-            onError(e);
-            /* setIsLoading(false); */
         }
+        catch (e) {
+            onError(e);
+        }
+        const currentUser = await Auth.currentAuthenticatedUser();
+        console.log(currentUser);
+        userHasAuthenticated(true);
+        history.push("/");
+
+        /* setIsLoading(false); */
+
         //setNewUser("test");
 
 
@@ -96,25 +101,16 @@ export default function ChangePassword() {
     function renderForm() {
         return (
             <form onSubmit={handleSubmit}>
-                <FormGroup controlId="email" bsSize="large">
-                    <FormLabel>Email</FormLabel>
-                    <FormControl
-                        autoFocus
-                        type="email"
-                        value={fields.email}
-                        onChange={handleFieldChange}
-                    />
-                </FormGroup>
-                <FormGroup controlId="password" bsSize="large">
+                <FormGroup controlId="password" bsSize="small">
                     <FormLabel>Password</FormLabel>
                     <FormControl
-                        /* autoFocus */
+                        autoFocus
                         type="password"
                         value={fields.password}
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
-                <FormGroup controlId="confirmPassword" bsSize="large">
+                <FormGroup controlId="confirmPassword" bsSize="small">
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl
                         type="password"
@@ -122,7 +118,7 @@ export default function ChangePassword() {
                         value={fields.confirmPassword}
                     />
                 </FormGroup>
-                <FormGroup controlId="confirmationCode" bsSize="large">
+                <FormGroup controlId="confirmationCode" bsSize="small">
                     <FormLabel>Confirmation Code</FormLabel>
                     <FormControl
                         autoFocus
