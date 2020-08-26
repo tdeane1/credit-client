@@ -20,6 +20,7 @@ function App() {
     try {
       await Auth.currentSession();
       userHasAuthenticated(true);
+      history.push("/")
     }
     catch (e) {
       if (e !== 'No current user') {

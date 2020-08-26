@@ -24,6 +24,7 @@ function Login() {
         newPasswordConfirm: ""
 
     });
+    const [IsVerified, setIsVerified] = useState(false);
     
 
     function validateNewPasswordForm() {
@@ -59,6 +60,7 @@ function Login() {
                         console.log("in userauthenticated");
                         console.log(user.attributes.email);
                         console.log(user.attributes.email_verified);
+                        if (user.attributes.email_verified == true) {setIsVerified(true)}
                         history.push("/");
                     }
                 });
