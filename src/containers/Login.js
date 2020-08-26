@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LinkContainer } from "react-router-bootstrap";
-import { Button, FormGroup, FormControl, FormLabel, NavItem } from "react-bootstrap";
+import { Button, FormGroup, FormControl, FormLabel, NavItem, } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import { useAppContext } from "../libs/contextLib";
 import { useHistory, browserHistory, useParams, withRouter, location } from "react-router-dom";
@@ -24,6 +24,7 @@ function Login() {
         newPasswordConfirm: ""
 
     });
+    
 
     function validateNewPasswordForm() {
         //console.log("validateNewPasswordForm");
@@ -41,33 +42,30 @@ function Login() {
     async function handleSubmitLogin(event) {
         console.log("handleSubmitLogin");
         event.preventDefault();
-        setIsLoading(true);
-
-        //setNewUser("test");
+        //setIsLoading(true);
 
         setIsLoading(false);
         try {
             await Auth.signIn(fields.email, fields.password)
                 .then(user => {
                     if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-                        console.log("new password required")
+                        //console.log("new password required")
 
                         setIsLoading(false);
                         setIsPwdToChange(true);
-
-
                     }
-
                     else {
                         userHasAuthenticated(true);
+                        console.log("in userauthenticated");
+                        console.log(user.attributes.email);
+                        console.log(user.attributes.email_verified);
                         history.push("/");
                     }
                 });
         } catch (e) {
             onError(e);
-            setIsLoading(false);;
+            setIsLoading(false);
         }
-
     }
     async function handleSubmitPasswordChange() {
         event.preventDefault();
@@ -79,26 +77,29 @@ function Login() {
                 .then(user => {
                     if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
                         const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
-                        Auth.completeNewPassword(
-                            user,               // the Cognito User Object
-                            fields.newPassword       // the new password
-                            // OPTIONAL, the required attributes
-                            //{
-                            //email: 'xxxx@example.com',
-                            //phone_number: '1234567890'
-                            //}
-                        ).then(user => {
-                            //user is logged in
-                            console.log(user);
-                            history.push("/")
-                        });
-                    }else
+                        try {
+                            Auth.completeNewPassword(
+                                user,               // the Cognito User Object
+                                fields.newPassword       // the new password
+
+                            ).then(user => {
+                                //user is logged in
+                                console.log(user);
+                                history.push("/")
+                            });
+                            alert("New Password Change Not Successful")
+                            setIsLoading(false);
+                            setIsPwdToChange(true);
+                        }
+                        catch (e) {
+                            onError(e);
+                        }
+
+                    } else {
 
 
+                    }
                 });
-
-
-
         }
         catch (e) {
             onError(e);
@@ -161,6 +162,9 @@ function Login() {
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
+                <nav className="nav">
+                    <a className="nav-link active" href="/login/reset">Forgot password?</a>
+                </nav>
                 <Button block disabled={!validateLoginForm()} type="submit">
                     Login
                 </Button>

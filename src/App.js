@@ -1,6 +1,6 @@
 import { LinkContainer } from "react-router-bootstrap";
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { Nav, Navbar, NavItem } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import "./App.css";
@@ -11,6 +11,7 @@ import Routes from "./Routes";
 function App() {
   const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  const history = useHistory();
   useEffect(() => {
     onLoad();
   }, []);
@@ -31,28 +32,30 @@ function App() {
   async function handleLogout() {
     await Auth.signOut();
     userHasAuthenticated(false);
+    history.push("/login")
   }
   return (
     <div className="App container">
-      <Navbar fluid="true" collapseOnSelect>
+      <Navbar bg="light" expand="lg" fluid="true" collapseOnSelect>
         {/* <Navbar.Header> */}
         <Navbar.Brand>
           <Link to="/">Credit Check</Link>
         </Navbar.Brand>
-        <Navbar.Toggle />
+        <Nav/>
         {/* </Navbar.Header> */}
-        <Nav >
+        <Nav className="justify-content-end"  >
           {isAuthenticated
-            ? <NavItem onClick={handleLogout}>Logout</NavItem>
-            : <>
-              <LinkContainer to="/changePassword">
-                <NavItem>Change Password</NavItem>
-              </LinkContainer>
-              <LinkContainer to="/login">
-                <NavItem>Login</NavItem>
-              </LinkContainer>
-            </>
+            ? <>
+                <Nav.Item>
+                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+                </Nav.Item>
+                <Nav.Link href="/changePassword">Change Password</Nav.Link>
+                <Nav.Link href="/verifyEmail">Verify Email</Nav.Link>
+              </>
+            : <Nav.Link href="/login">Login</Nav.Link>
+
           }
+
         </Nav>
       </Navbar>
       <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>

@@ -1,0 +1,24 @@
+@media all and (min-width: 480px) {
+    .VerifyEmail {
+      padding: 60px 0;
+    }
+  
+    .VerifyEmail form {
+      margin: 0 auto;
+      max-width: 320px;
+    }
+  
+    .VerifyEmail .success {
+      max-width: 400px;
+    }
+  }
+  
+  .VerifyEmail .success {
+    margin: 0 auto;
+    text-align: center;
+  }
+  .VerifyEmail .success .glyphicon {
+    color: grey;
+    font-size: 30px;
+    margin-bottom: 30px;
+  }

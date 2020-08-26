@@ -4,8 +4,10 @@ import Home from "./containers/Home";
 import Login from "./containers/Login";
 import NotFound from "./containers/NotFound";
 import ChangePassword from "./containers/ChangePassword"
+import ResetPassword from "./containers/ResetPassword"
+import VerifyEmail from "./containers/VerifyEmail"
 
- function Routes() {
+function Routes() {
     return (
         <Switch>
             <Route exact path="/">
@@ -14,8 +16,15 @@ import ChangePassword from "./containers/ChangePassword"
             <Route exact path="/login">
                 <Login />
             </Route>
-            <Route path="/changePassword" />
+            <Route path="/changePassword" >
                 <ChangePassword />
+            </Route>
+            <Route exact path="/login/reset">
+                <ResetPassword />
+            </Route>
+            <Route exact path="/verifyEmail">
+                <VerifyEmail />
+            </Route>
             <Route>
                 <NotFound />
             </Route>
