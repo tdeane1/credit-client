@@ -12,7 +12,7 @@ export default function Home() {
     });
 
     const [content, setContent] = useState("");
-    cont [showFields, setShowFields] = false;
+    const [showFields, setShowFields] = useState(false);
 
     function validateForm() {
         console.log(fields.idNumber);
@@ -107,7 +107,7 @@ export default function Home() {
                             disabled={!validateForm()}
                         >Get Credit Score
                     </Button>
-                    
+
                     </Form.Group>
                     <Form.Group controlId="creditScoreField">
                         <Form.Label>Credit Score</Form.Label>
