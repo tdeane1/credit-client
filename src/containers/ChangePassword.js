@@ -21,7 +21,7 @@ export default function ChangePassword() {
         confirmationCode: "",
     });
     const history = useHistory();
-    const [newUser, setNewUser] = useState(null);
+    //const [newUser, setNewUser] = useState(null);
     const { userHasAuthenticated } = useAppContext();
     const [isLoading, setIsLoading] = useState(false);
     console.log("In ChangePassword")
@@ -43,7 +43,9 @@ export default function ChangePassword() {
     async function handleSubmit(event) {
         event.preventDefault();
         console.log("In Handle Submit")
-         setIsLoading(true); 
+         setIsLoading(true);
+         console.log(isLoading);
+
 
         //const currentUser = await Auth.currentUserInfo();
         console.log(this.props.location.state.user);

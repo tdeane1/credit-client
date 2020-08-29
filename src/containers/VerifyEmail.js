@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { Auth } from "aws-amplify";
 //import { Link } from "react-router-dom";
-import {
-    HelpBlock,
-    FormGroup,
-    FormControl,
-    FormLabel,
-    Button, Form
-} from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 //import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import { onError } from "../libs/errorLib";
@@ -25,9 +19,9 @@ export default function VerifyEmail() {
     const [isSendingCode, setIsSendingCode] = useState(false);
 
 
-    function validateCodeForm() {
+    /* function validateCodeForm() {
         return fields.email.length > 0;
-    }
+    } */
 
     function validateVerifyForm() {
         return (
@@ -50,6 +44,7 @@ export default function VerifyEmail() {
         } catch (error) {
             onError(error);
             setIsSendingCode(false);
+            console.log(isSendingCode)
         }
     }
 

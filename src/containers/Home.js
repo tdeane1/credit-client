@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./Home.css";
-import { Form, Button, ListGroup, Spinner, Row, Col } from "react-bootstrap";
+import { Form, Button, ListGroup, Spinner } from "react-bootstrap";
 
-import { onError } from "../libs/errorLib";
+//import { onError } from "../libs/errorLib";
 import { API } from "aws-amplify";
 
 export default function Home() {

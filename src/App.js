@@ -13,9 +13,7 @@ function App() {
   const [isAuthenticated, userHasAuthenticated] = useState(false);
   //const [userName, setUserName] = useState("");
   const history = useHistory();
-  useEffect(() => {
-    onLoad();
-  }, []);
+  useEffect(() => { onLoad();}, []);
   
   const  myContext = {
     isAuthenticated: false,

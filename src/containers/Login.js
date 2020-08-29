@@ -1,14 +1,14 @@
 import React, { useState } from "react";
-import { LinkContainer } from "react-router-bootstrap";
+//import { LinkContainer } from "react-router-bootstrap";
 import { Button, FormGroup, FormControl, FormLabel, Spinner, } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import { useAppContext } from "../libs/contextLib";
-import { useHistory, browserHistory, useParams, withRouter, location } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import { useFormFields } from "../libs/hooksLib";
 import { onError } from "../libs/errorLib";
 //import ChangePassword from "./ChangePassword";
 import "./Login.css";
-import { updateLanguageServiceSourceFile } from "typescript";
+//import { updateLanguageServiceSourceFile } from "typescript";
 
 
 export default function Login() {
@@ -18,7 +18,7 @@ export default function Login() {
     //const [ context, setContext]  = useAppContext();
     //const [userName, setUserName]= useState("");
     //const { setUserName } = useAppContext();
-    const [LoggedInEmail, setLoggedInEmail] = useState("");
+    const [loggedInEmail, setLoggedInEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [IsPwdToChange, setIsPwdToChange] = useState(false);
     const [fields, handleFieldChange] = useFormFields({
@@ -28,7 +28,7 @@ export default function Login() {
         newPasswordConfirm: ""
 
     });
-    const [IsVerified, setIsVerified] = useState(false);
+    const [isVerified, setIsVerified] = useState(false);
 
 
     function validateNewPasswordForm() {
@@ -48,7 +48,7 @@ export default function Login() {
         console.log("handleSubmitLogin");
         event.preventDefault();
         setIsLoading(true);
-
+        
 
         try {
             await Auth.signIn(fields.email, fields.password)
@@ -63,11 +63,14 @@ export default function Login() {
                         setIsLoading(false);
                         setLoggedInEmail(user.attributes.email)
                         //setUserName(user.attributes.email);
+                        console.log(loggedInEmail);
                         console.log("in userauthenticated");
                         console.log(user.attributes.email);
                         console.log(user.attributes.email_verified);
                         userHasAuthenticated(true);
-                        if (user.attributes.email_verified === true) { setIsVerified(true) }
+                        if (user.attributes.email_verified === true) { 
+                            setIsVerified(true);
+                            console.log(isVerified);}
                         else {
                             history.push("/");
                         }
@@ -87,7 +90,7 @@ export default function Login() {
             await Auth.signIn(fields.email, fields.password)
                 .then(user => {
                     if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
-                        const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
+                        //const { requiredAttributes } = user.challengeParam; // the array of required attributes, e.g ['email', 'phone_number']
                         try {
                             Auth.completeNewPassword(
                                 user,               // the Cognito User Object
