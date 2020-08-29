@@ -51,7 +51,7 @@ export default function ResetPassword() {
         }
     }
 
-        async function handleConfirmClick(event) {
+    async function handleConfirmClick(event) {
         event.preventDefault();
 
         setIsConfirming(true);
@@ -72,7 +72,7 @@ export default function ResetPassword() {
     function renderRequestCodeForm() {
         return (
             <form onSubmit={handleSendCodeClick}>
-                <FormGroup bsSize="large" controlId="email">
+                <FormGroup  controlId="email">
                     <FormLabel>Email</FormLabel>
                     <FormControl
                         autoFocus
@@ -94,10 +94,10 @@ export default function ResetPassword() {
         );
     }
 
-        function renderConfirmationForm() {
+    function renderConfirmationForm() {
         return (
             <form onSubmit={handleConfirmClick}>
-                <FormGroup bsSize="large" controlId="code">
+                <FormGroup  controlId="code">
                     <FormLabel>Confirmation Code</FormLabel>
                     <FormControl
                         autoFocus
@@ -108,7 +108,7 @@ export default function ResetPassword() {
 
                 </FormGroup>
                 <hr />
-                <FormGroup bsSize="large" controlId="password">
+                <FormGroup  controlId="password">
                     <FormLabel>New Password</FormLabel>
                     <FormControl
                         type="password"
@@ -116,7 +116,7 @@ export default function ResetPassword() {
                         onChange={handleFieldChange}
                     />
                 </FormGroup>
-                <FormGroup bsSize="large" controlId="confirmPassword">
+                <FormGroup controlId="confirmPassword">
                     <FormLabel>Confirm Password</FormLabel>
                     <FormControl
                         type="password"
@@ -127,12 +127,11 @@ export default function ResetPassword() {
                 <Button
                     block
                     type="submit"
-                    bsSize="large"
                     isLoading={isConfirming}
                     disabled={!validateResetForm()}
                 >
                     Confirm
-        </Button>
+                </Button>
             </form>
         );
     }
@@ -145,7 +144,7 @@ export default function ResetPassword() {
                 <p>
                     <Link to="/login">
                         Click here to login with your new credentials.
-          </Link>
+                    </Link>
                 </p>
             </div>
         );

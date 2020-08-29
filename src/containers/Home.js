@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import "./Home.css";
-import { Form, Row, Container, Button, FormControl, ListGroup } from "react-bootstrap";
+import { Form, Button, ListGroup, Spinner, Row, Col } from "react-bootstrap";
 
 import { onError } from "../libs/errorLib";
 import { API } from "aws-amplify";
@@ -8,9 +8,11 @@ import { API } from "aws-amplify";
 export default function Home() {
     const [idNumber, setIdNumber] = useState("");
     const [content, setContent] = useState("");
-    
+    const [isLoading, setIsLoading] = useState(false);
+
+
     function validateForm() {
-        console.log(idNumber);           
+        console.log(idNumber);
         return (
             idNumber.length > 0 &&
             idNumber.length < 12
@@ -25,11 +27,14 @@ export default function Home() {
         setIdNumber(event.target.value);
         setContent("");
     }
-    
-    async function handleSubmit() {
+
+    async function handleSubmit(event) {
+        setIsLoading(true);
         event.preventDefault();
-        let id = "".concat(country.value.substr(0, 2))
-            .concat(idType.value.substr(0, 2))
+        console.log(event.target);
+        console.log(event.target.country.value);
+        let id = "".concat(event.target.country.value.substr(0, 2))
+            .concat(event.target.idType.value.substr(0, 2))
             .concat("0".repeat(11 - idNumber.length)
                 .concat(idNumber));
         console.log(id);
@@ -37,6 +42,7 @@ export default function Home() {
             await API.get("creditScore", `/creditScore/${id}`)
                 .then(contentReturned => {
                     console.log(contentReturned);
+                    setIsLoading(false);
                     /*  outPutFields.creditScore = content.creditScore;
                      outputFields.creditScoreRemarks = content.creditScoreRemarks;
                      outputFields.lastName = content.lastName; */
@@ -47,6 +53,7 @@ export default function Home() {
                 );
         }
         catch (e) {
+            setIsLoading(false);
             setContent("");
             //onError(e);
         }
@@ -55,7 +62,7 @@ export default function Home() {
     function renderForm() {
         return (
             <div >
-                <h1>Credit Note Check</h1>
+
                 <Form onSubmit={handleSubmit}>
                     <Form.Group controlId="country">
                         <Form.Label>Select Country ID is from</Form.Label>
@@ -96,8 +103,18 @@ export default function Home() {
                             type="submit"
                             disabled={!validateForm()}
                         >Get Credit Score
-                    </Button>
-                   </Form.Group>
+                        </Button>
+                        {isLoading ? <>
+                            <Spinner
+                                as="span"
+                                animation="border"
+                                role="status"
+                                aria-hidden="true"
+                            />
+                        </>
+                            : <></>
+                        }
+                    </Form.Group>
                     <ListGroup >
                         <ListGroup.Item
                         >Credit Score   : {content.creditScore} </ListGroup.Item>
@@ -108,7 +125,6 @@ export default function Home() {
             </div >
         );
     }
-
     return (
         <div className="Home">
             {renderForm()}

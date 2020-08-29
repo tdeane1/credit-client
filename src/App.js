@@ -1,7 +1,7 @@
-import { LinkContainer } from "react-router-bootstrap";
+//import { LinkContainer } from "react-router-bootstrap";
 import React, { useState, useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
-import { Nav, Navbar, NavItem } from "react-bootstrap";
+import { Nav, Navbar, } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import "./App.css";
 import './bootstrap-css/css/bootstrap.css';
@@ -9,16 +9,23 @@ import { AppContext } from "./libs/contextLib";
 import Routes from "./Routes";
 
 function App() {
-  const [isAuthenticating, setIsAuthenticating] = useState(true);
+  //const [isAuthenticating, setIsAuthenticating] = useState(true);
   const [isAuthenticated, userHasAuthenticated] = useState(false);
+  //const [userName, setUserName] = useState("");
   const history = useHistory();
   useEffect(() => {
     onLoad();
   }, []);
+  
+  const  myContext = {
+    isAuthenticated: false,
+    userName: ""
+    }
 
   async function onLoad() {
     try {
       await Auth.currentSession();
+      console.log("onLoad");
       userHasAuthenticated(true);
       history.push("/")
     }
@@ -28,7 +35,7 @@ function App() {
       }
     }
 
-    setIsAuthenticating(false);
+    //setIsAuthenticating(false);
   }
   async function handleLogout() {
     await Auth.signOut();
@@ -38,29 +45,29 @@ function App() {
   return (
     <div className="App container">
       <Navbar bg="light" expand="lg" fluid="true" collapseOnSelect>
-        {/* <Navbar.Header> */}
         <Navbar.Brand>
-          <Link to="/">Credit Check</Link>
+          <Link to="/">Telecom Credit Check</Link>
+          {/* <p>{userName}</p> */}
         </Navbar.Brand>
-        <Nav/>
-        {/* </Navbar.Header> */}
+        <Nav />
         <Nav className="justify-content-end"  >
           {isAuthenticated
             ? <>
-                <Nav.Item>
-                <Nav.Link onClick={handleLogout}>Logout</Nav.Link>
-                </Nav.Item>
-                <Nav.Link href="/changePassword">Change Password</Nav.Link>
-                <Nav.Link href="/verifyEmail">Verify Email</Nav.Link>
-              </>
-            : <Nav.Link href="/login">Login</Nav.Link>
-
-          }
-
+              <Nav.Item>
+                <Link to="/" onClick={handleLogout}>Logout</Link>
+              </Nav.Item>
+              {/* <Nav.Link href="/changePassword">Change Password</Nav.Link> */}
+              <Link to="/changePassword">Change Password</Link>
+              <Link to="/verifyEmail">Verify Email</Link>
+              {/*  <Nav.Link href="/verifyEmail">Verify Email</Nav.Link> */}
+            </>
+            : <div></div>}
         </Nav>
       </Navbar>
-      <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
-        <Routes />
+      <AppContext.Provider value={ myContext}>
+        <AppContext.Provider value={{ isAuthenticated, userHasAuthenticated }}>
+          <Routes />
+        </AppContext.Provider>
       </AppContext.Provider>
     </div>
   );

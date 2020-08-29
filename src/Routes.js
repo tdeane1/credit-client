@@ -6,29 +6,30 @@ import NotFound from "./containers/NotFound";
 import ChangePassword from "./containers/ChangePassword"
 import ResetPassword from "./containers/ResetPassword"
 import VerifyEmail from "./containers/VerifyEmail"
+import AuthenticatedRoute from "./components/AuthenticatedRoutes";
+import UnauthenticatedRoute from "./components/UnauthenticatedRoutes";
 
-function Routes() {
+export default function Routes() {
     return (
         <Switch>
-            <Route exact path="/">
+            <AuthenticatedRoute exact path="/">
                 <Home />
-            </Route>
-            <Route exact path="/login">
+            </AuthenticatedRoute>
+            <UnauthenticatedRoute exact path="/login">
                 <Login />
-            </Route>
-            <Route path="/changePassword" >
+            </UnauthenticatedRoute>
+            <AuthenticatedRoute exact path="/changePassword" >
                 <ChangePassword />
-            </Route>
-            <Route exact path="/login/reset">
+            </AuthenticatedRoute>
+            <UnauthenticatedRoute exact path="/login/reset">
                 <ResetPassword />
-            </Route>
-            <Route exact path="/verifyEmail">
+            </UnauthenticatedRoute>
+            <AuthenticatedRoute exact path="/verifyEmail">
                 <VerifyEmail />
-            </Route>
+            </AuthenticatedRoute>
             <Route>
                 <NotFound />
             </Route>
         </Switch>
     );
 }
-export default withRouter(Routes);

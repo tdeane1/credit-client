@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { LinkContainer } from "react-router-bootstrap";
-import { Button, FormGroup, FormControl, FormLabel, NavItem, } from "react-bootstrap";
+import { Button, FormGroup, FormControl, FormLabel, Spinner, } from "react-bootstrap";
 import { Auth } from "aws-amplify";
 import { useAppContext } from "../libs/contextLib";
 import { useHistory, browserHistory, useParams, withRouter, location } from "react-router-dom";
@@ -11,10 +11,14 @@ import "./Login.css";
 import { updateLanguageServiceSourceFile } from "typescript";
 
 
-function Login() {
+export default function Login() {
 
     const history = useHistory();
     const { userHasAuthenticated } = useAppContext();
+    //const [ context, setContext]  = useAppContext();
+    //const [userName, setUserName]= useState("");
+    //const { setUserName } = useAppContext();
+    const [LoggedInEmail, setLoggedInEmail] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [IsPwdToChange, setIsPwdToChange] = useState(false);
     const [fields, handleFieldChange] = useFormFields({
@@ -25,13 +29,13 @@ function Login() {
 
     });
     const [IsVerified, setIsVerified] = useState(false);
-    
+
 
     function validateNewPasswordForm() {
         //console.log("validateNewPasswordForm");
         return (
             fields.newPassword.length > 0 && fields.newPasswordConfirm.length > 0 &&
-            fields.newPassword == fields.newPasswordConfirm
+            fields.newPassword === fields.newPasswordConfirm
         );
     }
 
@@ -43,25 +47,30 @@ function Login() {
     async function handleSubmitLogin(event) {
         console.log("handleSubmitLogin");
         event.preventDefault();
-        //setIsLoading(true);
+        setIsLoading(true);
 
-        setIsLoading(false);
+
         try {
             await Auth.signIn(fields.email, fields.password)
                 .then(user => {
                     if (user.challengeName === 'NEW_PASSWORD_REQUIRED') {
                         //console.log("new password required")
-
+                        //setUserName(user.attributes.email);
                         setIsLoading(false);
                         setIsPwdToChange(true);
                     }
                     else {
-                        userHasAuthenticated(true);
+                        setIsLoading(false);
+                        setLoggedInEmail(user.attributes.email)
+                        //setUserName(user.attributes.email);
                         console.log("in userauthenticated");
                         console.log(user.attributes.email);
                         console.log(user.attributes.email_verified);
-                        if (user.attributes.email_verified == true) {setIsVerified(true)}
-                        history.push("/");
+                        userHasAuthenticated(true);
+                        if (user.attributes.email_verified === true) { setIsVerified(true) }
+                        else {
+                            history.push("/");
+                        }
                     }
                 });
         } catch (e) {
@@ -69,7 +78,7 @@ function Login() {
             setIsLoading(false);
         }
     }
-    async function handleSubmitPasswordChange() {
+    async function handleSubmitPasswordChange(event) {
         event.preventDefault();
         setIsLoading(true);
         console.log("In handleSubmitPasswordChange");
@@ -86,6 +95,7 @@ function Login() {
 
                             ).then(user => {
                                 //user is logged in
+                                setIsLoading(false);
                                 console.log(user);
                                 history.push("/")
                             });
@@ -94,16 +104,20 @@ function Login() {
                             setIsPwdToChange(true);
                         }
                         catch (e) {
+                            setIsLoading(false);
                             onError(e);
                         }
 
                     } else {
+                        setIsLoading(false);
 
 
                     }
                 });
         }
+
         catch (e) {
+            setIsLoading(false);
             onError(e);
         }
     }
@@ -154,6 +168,7 @@ function Login() {
                         type="email"
                         value={fields.email}
                         onChange={handleFieldChange}
+                        size="sm"
                     />
                 </FormGroup>
                 <FormGroup controlId="password" >
@@ -162,6 +177,7 @@ function Login() {
                         type="password"
                         value={fields.password}
                         onChange={handleFieldChange}
+                        size="sm"
                     />
                 </FormGroup>
                 <nav className="nav">
@@ -170,6 +186,19 @@ function Login() {
                 <Button block disabled={!validateLoginForm()} type="submit">
                     Login
                 </Button>
+                {isLoading ? <>
+                <Button variant="primary"  disabled visible="False">
+                    <Spinner
+                        as="span"
+                        animation="border"
+                        size="sm"
+                        role="status"
+                        aria-hidden="true"
+                    />
+                    <span className="sr-only">Loading...</span>
+                    Loading...
+                </Button>
+                  </> :<></>}    
 
 
             </form>
@@ -183,4 +212,3 @@ function Login() {
         </div>
     );
 }
-export default withRouter(Login);

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
 import { Auth } from "aws-amplify";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import {
     HelpBlock,
     FormGroup,
     FormControl,
     FormLabel,
-    Button
+    Button, Form
 } from "react-bootstrap";
 //import LoaderButton from "../components/LoaderButton";
 import { useFormFields } from "../libs/hooksLib";
 import { onError } from "../libs/errorLib";
-import "./ResetPassword.css";
+import "./VerifyEmail.css";
 //import { validateCodeForm, renderRequestCodeForm } from "./ResetPassword"
 
-export default function ResetPassword() {
+export default function VerifyEmail() {
     const [fields, handleFieldChange] = useFormFields({
         code: "",
         email: "",
@@ -89,16 +89,16 @@ export default function ResetPassword() {
     function renderConfirmationForm() {
         return (
             <form onSubmit={handleConfirmClick}>
-                <FormGroup bsSize="large" controlId="code">
-                    <FormLabel>Confirmation Code</FormLabel>
-                    <FormControl
+                <Form.Group bsSize="large" controlId="code">
+                    <Form.Label>Confirmation Code</Form.Label>
+                    <Form.Control
                         autoFocus
                         type="tel"
                         value={fields.code}
                         onChange={handleFieldChange}
                     />
 
-                </FormGroup>
+                </Form.Group>
                 <hr />
                 <Button
                     block
@@ -120,14 +120,16 @@ export default function ResetPassword() {
             </div>
         );
     }
-
+    /* console.log("in VerifyEmail"); */
     return (
-        <div className="VerifyPassword">
+
+        <div>
             {!codeSent
                 ? renderRequestCodeForm()
                 : !confirmed
                     ? renderConfirmationForm()
                     : renderSuccessMessage()}
         </div>
+
     );
 }
